@@ -8,6 +8,7 @@ import os
 import signal
 import atexit
 import time
+import threading
 
 # Configuration
 BACKEND_DIR = os.path.join(os.path.dirname(__file__), 'backend')
@@ -50,11 +51,20 @@ def start_service(command, cwd, name):
 def monitor_output(proc, name):
     """Monitor and print output from a process"""
     for line in iter(proc.stdout.readline, ''):
-        print(f"[{name}] {line.strip()}")
+        if line.strip():
+            print(f"[{name}] {line.strip()}")
 
 print("=" * 60)
 print("🚀 STARTING MEDIANALYZE - ALL SERVICES")
+print(f"📂 Current directory: {os.getcwd()}")
+print(f"📂 Backend directory: {BACKEND_DIR}")
+print(f"📂 Modules directory: {MODULES_DIR}")
 print("=" * 60)
+
+# Check if files exist
+print("\n🔍 Checking file existence...")
+print(f"✅ Backend server.js exists: {os.path.exists(os.path.join(BACKEND_DIR, 'server.js'))}")
+print(f"✅ index.html exists: {os.path.exists(os.path.join(os.path.dirname(__file__), 'index.html'))}")
 
 # Start Backend (Node.js)
 print("\n📦 Starting Node.js Backend...")
@@ -65,62 +75,80 @@ backend_proc = start_service(
 )
 
 # Give backend a moment to start
-time.sleep(2)
+time.sleep(3)
 
 # Start Module 1: Report Analyzer
 print("\n📄 Starting Report Analyzer Module...")
-report_proc = start_service(
-    [sys.executable, 'app.py', '--port=5001'],
-    os.path.join(MODULES_DIR, 'report_analyzer'),
-    "REPORT"
-)
+if os.path.exists(os.path.join(MODULES_DIR, 'report_analyzer', 'app.py')):
+    report_proc = start_service(
+        [sys.executable, 'app.py', '--port=5001'],
+        os.path.join(MODULES_DIR, 'report_analyzer'),
+        "REPORT"
+    )
+else:
+    print("⚠️ Report Analyzer module not found, skipping...")
+    report_proc = None
 
 # Start Module 2: Health Chatbot
 print("\n🤖 Starting Health Chatbot Module...")
-chatbot_proc = start_service(
-    [sys.executable, 'app_integrated.py'],
-    os.path.join(MODULES_DIR, 'health_chatbot'),
-    "CHATBOT"
-)
+if os.path.exists(os.path.join(MODULES_DIR, 'health_chatbot', 'app_integrated.py')):
+    chatbot_proc = start_service(
+        [sys.executable, 'app_integrated.py'],
+        os.path.join(MODULES_DIR, 'health_chatbot'),
+        "CHATBOT"
+    )
+else:
+    print("⚠️ Health Chatbot module not found, skipping...")
+    chatbot_proc = None
 
 # Start Module 3: Symptom Checker
 print("\n🔍 Starting Symptom Checker Module...")
-symptom_proc = start_service(
-    [sys.executable, 'app.py'],
-    os.path.join(MODULES_DIR, 'symptom_checker_ml'),
-    "SYMPTOM"
-)
+if os.path.exists(os.path.join(MODULES_DIR, 'symptom_checker_ml', 'app.py')):
+    symptom_proc = start_service(
+        [sys.executable, 'app.py'],
+        os.path.join(MODULES_DIR, 'symptom_checker_ml'),
+        "SYMPTOM"
+    )
+else:
+    print("⚠️ Symptom Checker module not found, skipping...")
+    symptom_proc = None
 
 # Start Module 4: Drug Interaction
 print("\n💊 Starting Drug Interaction Module...")
-drug_proc = start_service(
-    [sys.executable, 'app.py'],
-    os.path.join(MODULES_DIR, 'drug_interaction'),
-    "DRUG"
-)
+if os.path.exists(os.path.join(MODULES_DIR, 'drug_interaction', 'app.py')):
+    drug_proc = start_service(
+        [sys.executable, 'app.py'],
+        os.path.join(MODULES_DIR, 'drug_interaction'),
+        "DRUG"
+    )
+else:
+    print("⚠️ Drug Interaction module not found, skipping...")
+    drug_proc = None
 
 print("\n" + "=" * 60)
-print("✅ ALL SERVICES STARTED SUCCESSFULLY")
-print("📝 Backend: http://localhost:5000")
-print("📝 Report Analyzer: http://localhost:5001")
-print("📝 Chatbot: http://localhost:5002")
-print("📝 Symptom Checker: http://localhost:5003")
-print("📝 Drug Interaction: http://localhost:5004")
+print("✅ ALL SERVICES STARTED")
+print("🌐 Access your app at: https://medi-analyze.onrender.com")
 print("=" * 60 + "\n")
 
 # Monitor all processes
 try:
     # Create threads to monitor output
-    import threading
     threads = []
     
-    for proc, name in [
+    process_list = [
         (backend_proc, "BACKEND"),
-        (report_proc, "REPORT"),
-        (chatbot_proc, "CHATBOT"),
-        (symptom_proc, "SYMPTOM"),
-        (drug_proc, "DRUG")
-    ]:
+    ]
+    
+    if report_proc:
+        process_list.append((report_proc, "REPORT"))
+    if chatbot_proc:
+        process_list.append((chatbot_proc, "CHATBOT"))
+    if symptom_proc:
+        process_list.append((symptom_proc, "SYMPTOM"))
+    if drug_proc:
+        process_list.append((drug_proc, "DRUG"))
+    
+    for proc, name in process_list:
         thread = threading.Thread(target=monitor_output, args=(proc, name), daemon=True)
         thread.start()
         threads.append(thread)
@@ -132,3 +160,6 @@ try:
 except KeyboardInterrupt:
     print("\n\n⚠️ Received shutdown signal")
     sys.exit(0)
+except Exception as e:
+    print(f"\n❌ Error: {e}")
+    sys.exit(1)
