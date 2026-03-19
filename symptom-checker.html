@@ -312,6 +312,14 @@
     </div>
 
     <script>
+        // ===== DEPLOYMENT CONFIGURATION =====
+        // For local development vs production
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000'
+            : '';  // Empty means same domain (Render will serve both frontend and API)
+
+        console.log('🌐 Using API URL:', API_BASE_URL || 'same domain');
+        // ===================================
         // Sample symptoms list (expand this with real medical symptoms)
         // Custom symptom handling
         function handleCustomSymptomKeyPress(event) {
@@ -583,7 +591,7 @@
                 console.log('📤 Sending to:', 'http://127.0.0.1:5000/api/symptoms/predict');
                 console.log('📤 Payload:', { symptoms: selectedSymptoms });
 
-                const response = await fetch('http://127.0.0.1:5000/api/symptoms/predict', {
+                const response = await fetch(`${API_BASE_URL}/api/symptoms/predict`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

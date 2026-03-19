@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,7 +71,7 @@
             background: white;
             color: var(--dark);
             border-bottom-left-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
 
         .user .message-content {
@@ -162,7 +163,7 @@
             background: white;
             border-radius: 20px;
             width: fit-content;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
 
         .typing-indicator span {
@@ -182,13 +183,27 @@
         }
 
         @keyframes typing {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .error-message {
@@ -233,13 +248,14 @@
             .message-content {
                 max-width: 85%;
             }
-            
+
             .quick-actions {
                 justify-content: center;
             }
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <div class="nav-container">
@@ -272,7 +288,7 @@
                     <span>AI Health Assistant</span>
                     <span class="model-badge" id="modelBadge">Medical RAG</span>
                 </div>
-                
+
                 <div class="chat-messages" id="chatMessages">
                     <!-- Welcome message -->
                     <div class="message bot">
@@ -290,15 +306,18 @@
                 </div>
 
                 <div class="quick-actions">
-                    <span class="quick-action" data-query="What are common side effects of antibiotics?">💊 Antibiotics</span>
-                    <span class="quick-action" data-query="Foods to avoid with high blood pressure">🥗 Hypertension diet</span>
+                    <span class="quick-action" data-query="What are common side effects of antibiotics?">💊
+                        Antibiotics</span>
+                    <span class="quick-action" data-query="Foods to avoid with high blood pressure">🥗 Hypertension
+                        diet</span>
                     <span class="quick-action" data-query="Explain what HbA1c means">📊 HbA1c explained</span>
                     <span class="quick-action" data-query="Symptoms of vitamin D deficiency">☀️ Vitamin D</span>
                     <span class="quick-action" data-query="When to take thyroid medication">🦋 Thyroid meds</span>
                 </div>
 
                 <div class="chat-input-area">
-                    <input type="text" class="chat-input" id="userInput" placeholder="Type your health question..." onkeypress="handleKeyPress(event)">
+                    <input type="text" class="chat-input" id="userInput" placeholder="Type your health question..."
+                        onkeypress="handleKeyPress(event)">
                     <button class="send-btn" id="sendBtn" onclick="sendMessage()">
                         <i class="fas fa-paper-plane"></i>
                     </button>
@@ -309,6 +328,14 @@
 
     <script>
         // Check if user is logged in
+        // ===== DEPLOYMENT CONFIGURATION =====
+        // For local development vs production
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000'
+            : '';  // Empty means same domain (Render will serve both frontend and API)
+
+        console.log('🌐 Using API URL:', API_BASE_URL || 'same domain');
+        // ===================================
         const token = localStorage.getItem('token');
         const user = JSON.parse(localStorage.getItem('user'));
 
@@ -352,15 +379,15 @@
             showTypingIndicator();
 
             try {
-                const response = await fetch('http://localhost:5000/api/chatbot/message', {
+                const response = await fetch(`${API_BASE_URL}/api/chatbot/message`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ 
+                    body: JSON.stringify({
                         message: message,
-                        userId: user.id 
+                        userId: user.id
                     })
                 });
 
@@ -389,9 +416,9 @@
         function addMessage(text, sender) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
-            
+
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
+
             // Format bot responses with better styling
             let formattedText = text;
             if (sender === 'bot') {
@@ -400,14 +427,14 @@
                 // Convert line breaks to <br>
                 formattedText = formattedText.replace(/\n/g, '<br>');
             }
-            
+
             messageDiv.innerHTML = `
                 <div class="message-content">
                     ${formattedText}
                     <div class="message-time">${time}</div>
                 </div>
             `;
-            
+
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
@@ -445,4 +472,5 @@
         userInput.focus();
     </script>
 </body>
+
 </html>

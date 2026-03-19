@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,7 +35,7 @@
         }
 
         .user-badge {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             padding: 10px 20px;
             border-radius: 50px;
             display: flex;
@@ -101,7 +102,7 @@
             padding: 30px;
             box-shadow: var(--shadow);
             transition: all 0.3s;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             cursor: pointer;
         }
 
@@ -226,13 +227,18 @@
         }
 
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .logout-btn {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
             padding: 8px 20px;
             border-radius: 50px;
@@ -242,7 +248,7 @@
         }
 
         .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .doctor-badge {
@@ -256,6 +262,7 @@
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <div class="nav-container">
@@ -415,6 +422,14 @@
     </div>
 
     <script>
+        // ===== DEPLOYMENT CONFIGURATION =====
+        // For local development vs production
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000'
+            : '';  // Empty means same domain (Render will serve both frontend and API)
+
+        console.log('🌐 Using API URL:', API_BASE_URL || 'same domain');
+        // ===================================
         // Check if user is logged in and is a doctor
         const token = localStorage.getItem('token');
         const user = JSON.parse(localStorage.getItem('user'));
@@ -431,10 +446,10 @@
             // Load dashboard
             document.getElementById('loadingSpinner').style.display = 'none';
             document.getElementById('dashboardContent').style.display = 'block';
-            
+
             // Update user info
             document.getElementById('userName').textContent = user.name || 'Doctor';
-            
+
             // Set dummy stats (replace with real data later)
             document.getElementById('reportCount').textContent = '24';
             document.getElementById('patientCount').textContent = '18';
@@ -443,7 +458,7 @@
         }
 
         // Logout function
-        window.logout = function() {
+        window.logout = function () {
             console.log('Logging out...');
             localStorage.clear();
             sessionStorage.clear();
@@ -451,10 +466,10 @@
         };
 
         // Also handle logout button
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const logoutBtn = document.getElementById('logoutBtn');
             if (logoutBtn) {
-                logoutBtn.addEventListener('click', function(e) {
+                logoutBtn.addEventListener('click', function (e) {
                     e.preventDefault();
                     logout();
                 });
@@ -462,4 +477,5 @@
         });
     </script>
 </body>
+
 </html>

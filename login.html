@@ -193,6 +193,14 @@
     </div>
 
     <script>
+        // ===== DEPLOYMENT CONFIGURATION =====
+        // For local development vs production
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000'
+            : '';  // Empty means same domain (Render will serve both frontend and API)
+
+        console.log('🌐 Using API URL:', API_BASE_URL || 'same domain');
+        // ===================================
         document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
@@ -212,7 +220,7 @@
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch('http://localhost:5000/api/auth/login', {
+                const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

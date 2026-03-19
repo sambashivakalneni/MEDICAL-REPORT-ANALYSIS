@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,7 +35,7 @@
         }
 
         .user-badge {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             padding: 10px 20px;
             border-radius: 50px;
             display: flex;
@@ -101,7 +102,7 @@
             padding: 30px;
             box-shadow: var(--shadow);
             transition: all 0.3s;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             cursor: pointer;
         }
 
@@ -226,13 +227,18 @@
         }
 
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .logout-btn {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
             padding: 8px 20px;
             border-radius: 50px;
@@ -242,10 +248,11 @@
         }
 
         .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <div class="nav-container">
@@ -403,47 +410,56 @@
     </div>
 
     <script>
-    // Simple check - run this first to see if JS is working
-    console.log('Dashboard loaded');
-    
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    
-    console.log('Token:', token ? 'Exists' : 'Missing');
-    console.log('User:', user);
-    
-    if (!token || !user) {
-        console.log('No token/user, redirecting to login');
-        window.location.href = 'login.html';
-    } else {
-        // Parse user data
-        const userData = JSON.parse(user);
-        console.log('User data:', userData);
-        
-        // Hide loading spinner
-        document.getElementById('loadingSpinner').style.display = 'none';
-        
-        // Show dashboard content
-        document.getElementById('dashboardContent').style.display = 'block';
-        
-        // Update basic info
-        document.getElementById('userName').textContent = userData.name || 'User';
-        document.getElementById('userRole').textContent = 
-            userData.role === 'doctor' ? 'Doctor' : 'Patient';
-        
-        // Set dummy stats for now
-        document.getElementById('reportCount').textContent = '0';
-        document.getElementById('chatCount').textContent = '0';
-        document.getElementById('symptomCount').textContent = '0';
-        document.getElementById('medicationCount').textContent = '0';
-    }
+        // ===== DEPLOYMENT CONFIGURATION =====
+        // For local development vs production
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000'
+            : '';  // Empty means same domain (Render will serve both frontend and API)
 
-    // Logout function
-    window.logout = function() {
-        localStorage.clear();
-        window.location.href = 'index.html';
-    };
-</script>
+        console.log('🌐 Using API URL:', API_BASE_URL || 'same domain');
+        // ===================================
+        // Simple check - run this first to see if JS is working
+        console.log('Dashboard loaded');
+
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+
+        console.log('Token:', token ? 'Exists' : 'Missing');
+        console.log('User:', user);
+
+        if (!token || !user) {
+            console.log('No token/user, redirecting to login');
+            window.location.href = 'login.html';
+        } else {
+            // Parse user data
+            const userData = JSON.parse(user);
+            console.log('User data:', userData);
+
+            // Hide loading spinner
+            document.getElementById('loadingSpinner').style.display = 'none';
+
+            // Show dashboard content
+            document.getElementById('dashboardContent').style.display = 'block';
+
+            // Update basic info
+            document.getElementById('userName').textContent = userData.name || 'User';
+            document.getElementById('userRole').textContent =
+                userData.role === 'doctor' ? 'Doctor' : 'Patient';
+
+            // Set dummy stats for now
+            document.getElementById('reportCount').textContent = '0';
+            document.getElementById('chatCount').textContent = '0';
+            document.getElementById('symptomCount').textContent = '0';
+            document.getElementById('medicationCount').textContent = '0';
+        }
+
+        // Logout function
+        window.logout = function () {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        };
+    </script>
 </body>
+
 </html>

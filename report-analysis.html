@@ -469,6 +469,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
+        // ===== DEPLOYMENT CONFIGURATION =====
+        // For local development vs production
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000'
+            : '';  // Empty means same domain (Render will serve both frontend and API)
+
+        console.log('🌐 Using API URL:', API_BASE_URL || 'same domain');
+        // ===================================
         // Check if user is logged in
         const token = localStorage.getItem('token');
         const user = JSON.parse(localStorage.getItem('user'));
@@ -584,7 +592,7 @@
                 formData.append('userId', user.id);
                 // No need to send role separately - Node.js gets it from database
 
-                const response = await fetch('http://127.0.0.1:5000/api/reports/analyze', {
+                const response = await fetch(`${API_BASE_URL}/api/reports/analyze`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`

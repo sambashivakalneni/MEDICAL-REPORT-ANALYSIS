@@ -330,6 +330,14 @@
     </div>
 
     <script>
+        // ===== DEPLOYMENT CONFIGURATION =====
+        // For local development vs production
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000'
+            : '';  // Empty means same domain (Render will serve both frontend and API)
+
+        console.log('🌐 Using API URL:', API_BASE_URL || 'same domain');
+        // ===================================
         let selectedRole = 'patient';
 
         // Role selection
@@ -441,7 +449,7 @@
 
             try {
                 // Send to backend
-                const response = await fetch('http://localhost:5000/api/auth/register', {
+                const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

@@ -1,8 +1,25 @@
-Flask==2.3.3
-groq==0.18.0
-pdfplumber==0.11.5
-python-dotenv==1.0.0
-werkzeug==2.3.7
-PyPDF2==3.0.1
-requests==2.31.0
-gunicorn==21.2.0  # For production deployment
+# Report Analyzer Requirements
+flask>=2.0.0
+groq>=0.18.0
+pdfplumber>=0.11.5
+python-dotenv
+werkzeug
+
+# Health Chatbot Requirements
+langchain==0.2.17
+sentence-transformers==3.2.1
+pypdf==5.4.0
+langchain-pinecone==0.1.3
+langchain-openai==0.3.8
+langchain-community==0.2.19
+pinecone-client==5.0.1
+ipykernel
+
+# Symptom Checker Requirements
+pandas==2.0.3
+numpy==1.24.3
+scikit-learn==1.3.0
+joblib==1.3.2
+langchain-groq==0.1.0
+
+# Drug Interaction Requirements (same as symptom checker)
